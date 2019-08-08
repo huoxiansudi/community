@@ -3,6 +3,7 @@ package com.hxsd.mapper;
 import com.hxsd.model.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * Created by jinhs on 2019-08-06.
@@ -14,4 +15,6 @@ public interface UserMapper {
             "(#{name},#{accountId},#{token},#{gmtCreate},#{gmtModified  })")
     void insert(User user);
 
+    @Select("select * from User where token=#{token}")
+    User findByToken(String token);
 }
