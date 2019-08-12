@@ -2,14 +2,12 @@ package com.hxsd.controller;
 
 import com.hxsd.mapper.UserMapper;
 import com.hxsd.model.User;
-import com.sun.xml.internal.ws.client.ResponseContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by jinhs on 2019-08-01.
@@ -24,7 +22,7 @@ public class IndexController {
     public String index(HttpServletRequest request) {
 
         Cookie[] cookies = request.getCookies();
-        if(cookies!=null && cookies.length>0){
+        if (cookies != null && cookies.length > 0) {
 
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("token")) {
