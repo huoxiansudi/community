@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * Created by jinhs on 2019-08-06.
  */
@@ -16,6 +18,9 @@ public interface QuestionMapper {
             "values(#{title},#{description},#{tag},#{gmtCreate},#{gmtModified},#{creator})")
     void create(Question question);
 
-   @Select("select * from User where token=#{token}")
-   User findByToken(String token);
+    @Select("select * from User where token=#{token}")
+    User findByToken(String token);
+
+    @Select("select * from question")
+    List<Question> list();
 }

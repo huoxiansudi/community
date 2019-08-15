@@ -1,12 +1,13 @@
-package com.hxsd.model;
+package com.hxsd.entity;
 
+import com.hxsd.model.User;
 import lombok.Data;
 
 /**
- * Created by jinhs on 2019-08-06.
+ * Created by jinhs on 2019-08-15.
  */
 @Data
-public class Question {
+public class QuestionEntity {
 
     private Integer id;
     private Integer commentCount;
@@ -17,5 +18,5 @@ public class Question {
     private String description;
     private Long gmtCreate;
     private Long gmtModified;
-
+    private User user;
 }
