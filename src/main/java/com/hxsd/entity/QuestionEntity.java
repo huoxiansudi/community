@@ -19,4 +19,5 @@ public class QuestionEntity {
     private Long gmtCreate;
     private Long gmtModified;
     private User user;
+    private String avatarUrl;
 }
