@@ -102,4 +102,15 @@ public class QuestionService {
 
         return paginationEntity;
     }
+
+    public QuestionEntity getById(Integer id) {
+        //把question的所有属性 拷贝到 qeustionTranEntity.
+        QuestionEntity questionEntity = new QuestionEntity();
+        Question question = questionMapper.getById(id);
+        BeanUtils.copyProperties(question, questionEntity);
+        User user = userMapper.findById(question.getCreator());
+        questionEntity.setUser(user);
+
+        return questionEntity;
+    }
 }

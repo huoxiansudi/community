@@ -18,6 +18,6 @@ public class QuestionEntity {
     private String description;
     private Long gmtCreate;
     private Long gmtModified;
-    private User user;
     private String avatarUrl;
+    private User user;
 }
