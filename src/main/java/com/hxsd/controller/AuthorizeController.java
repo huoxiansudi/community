@@ -2,9 +2,9 @@ package com.hxsd.controller;
 
 import com.hxsd.entity.AccessTokenEntity;
 import com.hxsd.entity.GithubUserEntity;
-import com.hxsd.mapper.UserMapper;
 import com.hxsd.model.User;
 import com.hxsd.provider.GithubProvider;
+import com.hxsd.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -34,7 +34,7 @@ public class AuthorizeController {
     private String redirect_url;
 
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
@@ -53,19 +53,19 @@ public class AuthorizeController {
         GithubUserEntity githubUserEntity = githubProvider.getUser(accessToken);
         System.out.println(githubUserEntity.getName());
 
-        if (githubUserEntity != null && githubUserEntity.getId()!=null) {
+        if (githubUserEntity != null && githubUserEntity.getId() != null) {
 
             User user = new User();
             String token = UUID.randomUUID().toString();
             user.setToken(token);
             user.setName(githubUserEntity.getName());
             user.setAccountId(String.valueOf(githubUserEntity.getId()));
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
+
             user.setAvatarUrl(githubUserEntity.getAvatarUrl());
-            userMapper.insert(user);//添加到数据库
+            userService.createOrUpdate(user);
+
             //request.getSession().setAttribute("user",githubUserEntity);
-            response.addCookie(new Cookie("token",token));
+            response.addCookie(new Cookie("token", token));
             return "redirect:/";
             //登录成功 cookie 和 session
         } else {
@@ -73,4 +73,17 @@ public class AuthorizeController {
             return "redirect:/";
         }
     }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request,
+                         HttpServletResponse response) {
+        request.getSession().removeAttribute("user");
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
+        //登录失败 重新登录
+        return "redirect:/";
+    }
+
 }
