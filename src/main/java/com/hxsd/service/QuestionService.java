@@ -5,7 +5,9 @@ import com.hxsd.entity.QuestionEntity;
 import com.hxsd.mapper.QuestionMapper;
 import com.hxsd.mapper.UserMapper;
 import com.hxsd.model.Question;
+import com.hxsd.model.QuestionExample;
 import com.hxsd.model.User;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,7 @@ public class QuestionService {
         PaginationEntity paginationEntity = new PaginationEntity();
 
         //获取总数和分页数
-        Integer totalCount = questionMapper.count();
+        Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
         paginationEntity.setPagination(totalCount, page, size);
         //获取总数和分页数
 
@@ -44,11 +46,11 @@ public class QuestionService {
 
         //数据库分页查询
         Integer offset = size * (page - 1);
-        List<Question> questions = questionMapper.list(offset, size);
+        List<Question> questions = questionMapper.selectByExampleWithBLOBsWithRowbounds(new QuestionExample(), new RowBounds(offset, size));
         //数据库分页查询
 
         for (Question question : questions) {
-            User user = userMapper.findById(question.getCreator());
+            User user = userMapper.selectByPrimaryKey(question.getCreator());
 
             //把question的所有属性 拷贝到 qeustionTranEntity
             QuestionEntity questionEntity = new QuestionEntity();
@@ -70,24 +72,30 @@ public class QuestionService {
         PaginationEntity paginationEntity = new PaginationEntity();
 
         //获取总数和分页数
-        Integer totalCount = questionMapper.countByUserId(userId);
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.createCriteria()
+                .andCreatorEqualTo(userId);
+        Integer totalCount = (int) questionMapper.countByExample(questionExample);
         paginationEntity.setPagination(totalCount, page, size);
         //获取总数和分页数
 
         if (page <= 1) {
             page = 1;
         }
-        if (page > paginationEntity.getTotalPage() && page!=1) {
+        if (page > paginationEntity.getTotalPage() && page != 1) {
             page = paginationEntity.getTotalPage();
         }
 
         //数据库分页查询
         Integer offset = size * (page - 1);
-        List<Question> questions = questionMapper.replyList(userId,offset, size);
+        QuestionExample example = new QuestionExample();
+        example.createCriteria()
+                .andCreatorEqualTo(userId);
+        List<Question> questions = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
         //数据库分页查询
 
         for (Question question : questions) {
-            User user = userMapper.findById(question.getCreator());
+            User user = userMapper.selectByPrimaryKey(question.getCreator());
 
             //把question的所有属性 拷贝到 qeustionTranEntity
             QuestionEntity questionEntity = new QuestionEntity();
@@ -106,24 +114,32 @@ public class QuestionService {
     public QuestionEntity getById(Integer id) {
         //把question的所有属性 拷贝到 qeustionTranEntity.
         QuestionEntity questionEntity = new QuestionEntity();
-        Question question = questionMapper.getById(id);
+
+        Question question = questionMapper.selectByPrimaryKey(id);
         BeanUtils.copyProperties(question, questionEntity);
-        User user = userMapper.findById(question.getCreator());
+        User user = userMapper.selectByPrimaryKey(question.getCreator());
         questionEntity.setUser(user);
 
         return questionEntity;
     }
 
     public void createOrUpdate(Question question) {
-        if(question.getId() == null){
+        if (question.getId() == null) {
             //创建
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(System.currentTimeMillis());
-            questionMapper.create(question);
-        }else{
+            questionMapper.insert(question);
+        } else {
             //更新
-            question.setGmtModified(System.currentTimeMillis());
-            questionMapper.update(question);
+            Question updateQuestion = new Question();
+            updateQuestion.setGmtModified(System.currentTimeMillis());
+            updateQuestion.setTitle(question.getTitle());
+            updateQuestion.setDescription(question.getDescription());
+            updateQuestion.setTag(question.getTag());
+            QuestionExample questionExample = new QuestionExample();
+            questionExample.createCriteria()
+                    .andIdEqualTo(question.getId());
+            questionMapper.updateByExampleSelective(updateQuestion,questionExample);
         }
     }
 }

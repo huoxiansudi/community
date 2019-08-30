@@ -2,8 +2,11 @@ package com.hxsd.service;
 
 import com.hxsd.mapper.UserMapper;
 import com.hxsd.model.User;
+import com.hxsd.model.UserExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by jinhs on 2019-08-27.
@@ -14,20 +17,27 @@ public class UserService {
     private UserMapper userMapper;
 
     public void createOrUpdate(User user) {
-        User dbUser = userMapper.findByAccountId(user.getAccountId());
-        if(dbUser == null){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andAccountIdEqualTo(user.getAccountId());
+        List<User> userList = userMapper.selectByExample(userExample);
+        if(userList.size() == 0){
             //插入数据
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
             userMapper.insert(user);
         }else{
-            dbUser.setGmtCreate(System.currentTimeMillis());
-            dbUser.setGmtModified(user.getGmtCreate());
-            dbUser.setName(user.getName());
-            dbUser.setToken(user.getToken());
-            dbUser.setAvatarUrl(user.getAvatarUrl());
+            User dbUser = userList.get(0);
+
+            User updateUser = new User();
+            updateUser.setGmtCreate(System.currentTimeMillis());
+            updateUser.setGmtModified(user.getGmtCreate());
+            updateUser.setName(user.getName());
+            updateUser.setToken(user.getToken());
+            updateUser.setAvatarUrl(user.getAvatarUrl());
+            UserExample example = new UserExample();
+            example.createCriteria().andIdEqualTo(dbUser.getId());
             //更新数据
-            userMapper.update(dbUser);
+            userMapper.updateByExampleSelective(updateUser,example);
         }
     }
 }
