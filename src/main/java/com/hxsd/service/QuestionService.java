@@ -2,6 +2,8 @@ package com.hxsd.service;
 
 import com.hxsd.entity.PaginationEntity;
 import com.hxsd.entity.QuestionEntity;
+import com.hxsd.exception.CustomizeErrorCode;
+import com.hxsd.exception.CustomizeException;
 import com.hxsd.mapper.QuestionMapper;
 import com.hxsd.mapper.UserMapper;
 import com.hxsd.model.Question;
@@ -116,6 +118,9 @@ public class QuestionService {
         QuestionEntity questionEntity = new QuestionEntity();
 
         Question question = questionMapper.selectByPrimaryKey(id);
+        if(question==null){
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         BeanUtils.copyProperties(question, questionEntity);
         User user = userMapper.selectByPrimaryKey(question.getCreator());
         questionEntity.setUser(user);
@@ -139,7 +144,10 @@ public class QuestionService {
             QuestionExample questionExample = new QuestionExample();
             questionExample.createCriteria()
                     .andIdEqualTo(question.getId());
-            questionMapper.updateByExampleSelective(updateQuestion,questionExample);
+            int updateId = questionMapper.updateByExampleSelective(updateQuestion,questionExample);
+            if(updateId !=1){
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
         }
     }
 }
