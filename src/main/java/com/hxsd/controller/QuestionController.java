@@ -29,6 +29,9 @@ public class QuestionController {
 
         QuestionEntity questionEntity = questionService.getById(id);
 
+        //累计阅读数
+        questionService.incView(id);
+
         model.addAttribute("question",questionEntity);
 
         return "question";

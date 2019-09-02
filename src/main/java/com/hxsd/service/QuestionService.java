@@ -4,6 +4,7 @@ import com.hxsd.entity.PaginationEntity;
 import com.hxsd.entity.QuestionEntity;
 import com.hxsd.exception.CustomizeErrorCode;
 import com.hxsd.exception.CustomizeException;
+import com.hxsd.mapper.QuestionExtMapper;
 import com.hxsd.mapper.QuestionMapper;
 import com.hxsd.mapper.UserMapper;
 import com.hxsd.model.Question;
@@ -25,6 +26,8 @@ public class QuestionService {
 
     @Autowired
     private QuestionMapper questionMapper;
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
 
     @Autowired
     private UserMapper userMapper;
@@ -118,7 +121,7 @@ public class QuestionService {
         QuestionEntity questionEntity = new QuestionEntity();
 
         Question question = questionMapper.selectByPrimaryKey(id);
-        if(question==null){
+        if (question == null) {
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
         }
         BeanUtils.copyProperties(question, questionEntity);
@@ -144,10 +147,24 @@ public class QuestionService {
             QuestionExample questionExample = new QuestionExample();
             questionExample.createCriteria()
                     .andIdEqualTo(question.getId());
-            int updateId = questionMapper.updateByExampleSelective(updateQuestion,questionExample);
-            if(updateId !=1){
+            int updateId = questionMapper.updateByExampleSelective(updateQuestion, questionExample);
+            if (updateId != 1) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
         }
+    }
+
+    public void incView(Integer id) {
+        Question updateQuestion = new Question();
+        updateQuestion.setId(id);
+        updateQuestion.setViewCount(1);
+
+        int aa = questionExtMapper.updateViewCount(updateQuestion);
+
+       /* QuestionExample questionExample =new  QuestionExample();
+        questionExample.createCriteria()
+                .andIdEqualTo(id);
+        questionMapper.updateByExampleSelective(updateQuestion, questionExample);*/
+
     }
 }
