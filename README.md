@@ -9,3 +9,7 @@
 
 [访问地址]http:
 ##菜鸟教程
+
+````bash
+mvn flyway:migrate
+mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
