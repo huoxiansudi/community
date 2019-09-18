@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hxsd.mapper.QuestionExtMapper">
+
   <update id="updateViewCount" parameterType="com.hxsd.model.Question">
-    update QUESTION SET VIEW_COUNT = VIEW_COUNT + #{viewCount}  where ID = #{id}
+    update QUESTION
+    SET
+    VIEW_COUNT = VIEW_COUNT + #{viewCount}
+    where ID = #{id}
   </update>
 
+
+  <update id="updateCommentCount" parameterType="com.hxsd.model.Question">
+    update QUESTION
+    SET
+    COMMENT_COUNT = COMMENT_COUNT + #{commentCount}
+    where ID = #{id}
+  </update>
 </mapper>

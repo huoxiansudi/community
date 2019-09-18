@@ -9,9 +9,9 @@ import lombok.Data;
 @Data
 public class QuestionEntity {
 
-    private Integer id;
+    private Long id;
     private Integer commentCount;
-    private Integer creator;
+    private Long creator;
     private Integer viewCount;
     private String title;
     private String tag;

@@ -72,7 +72,7 @@ public class QuestionService {
 
     }
 
-    public PaginationEntity list(Integer userId, Integer page, Integer size) {
+    public PaginationEntity list(Long userId, Integer page, Integer size) {
         List<QuestionEntity> questionEntityList = new ArrayList<>();
         PaginationEntity paginationEntity = new PaginationEntity();
 
@@ -116,7 +116,7 @@ public class QuestionService {
         return paginationEntity;
     }
 
-    public QuestionEntity getById(Integer id) {
+    public QuestionEntity getById(Long id) {
         //把question的所有属性 拷贝到 qeustionTranEntity.
         QuestionEntity questionEntity = new QuestionEntity();
 
@@ -136,6 +136,8 @@ public class QuestionService {
             //创建
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(System.currentTimeMillis());
+            question.setViewCount(0);
+            question.setCommentCount(0);
             questionMapper.insert(question);
         } else {
             //更新
@@ -154,7 +156,7 @@ public class QuestionService {
         }
     }
 
-    public void incView(Integer id) {
+    public void incView(Long id) {
         Question updateQuestion = new Question();
         updateQuestion.setId(id);
         updateQuestion.setViewCount(1);

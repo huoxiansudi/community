@@ -8,4 +8,5 @@ import com.hxsd.model.Question;
 public interface QuestionExtMapper {
 
     int updateViewCount(Question question);
+    int updateCommentCount(Question question);
 }

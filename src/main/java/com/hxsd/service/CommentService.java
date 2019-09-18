@@ -7,8 +7,10 @@ import com.hxsd.mapper.CommentMapper;
 import com.hxsd.mapper.QuestionExtMapper;
 import com.hxsd.mapper.QuestionMapper;
 import com.hxsd.model.Comment;
+import com.hxsd.model.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by jinhs on 2019-08-15.
@@ -24,6 +26,7 @@ public class CommentService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
 
+    @Transactional
     public void insert(Comment comment) {
 
         if (comment.getParentId() == null || comment.getParentId() == 0) {
@@ -43,7 +46,13 @@ public class CommentService {
             commentMapper.insert(comment);
         }else{
             //回复问题
-            questionMapper.selectByPrimaryKey(Integer.parseInt(String.valueOf(comment.getParentId())));
+            Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
+            if(question==null){
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
+            commentMapper.insert(comment);
+            question.setCommentCount(1);
+            questionExtMapper.updateCommentCount(question);
         }
     }
 }
