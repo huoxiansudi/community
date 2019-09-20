@@ -1,12 +1,13 @@
 package com.hxsd.controller;
 
-import com.hxsd.entity.CommentEntity;
+import com.hxsd.entity.CommentCreateEntity;
 import com.hxsd.entity.ResultEntity;
 import com.hxsd.exception.CustomizeErrorCode;
 import com.hxsd.mapper.CommentMapper;
 import com.hxsd.model.Comment;
 import com.hxsd.model.User;
 import com.hxsd.service.CommentService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +31,7 @@ public class CommentController {
 
     @ResponseBody
     @RequestMapping(value = "/comment",method = RequestMethod.POST)
-    public Object post(@RequestBody CommentEntity commentEntity,
+    public Object post(@RequestBody CommentCreateEntity commentCreateEntity,
                        HttpServletRequest request){
 
         User user = (User) request.getSession().getAttribute("user");
@@ -38,11 +39,15 @@ public class CommentController {
         if(user==null){
             return ResultEntity.errorOf(CustomizeErrorCode.NO_LOGIN);
         }
-//
+
+        if(commentCreateEntity == null|| StringUtils.isBlank(commentCreateEntity.getContent())){
+            return ResultEntity.errorOf(CustomizeErrorCode.COMMENT_IS_EMPTY);
+        }
+
         Comment comment = new Comment();
-        comment.setParentId(commentEntity.getParentId());
-        comment.setContent(commentEntity.getContent());
-        comment.setType(commentEntity.getType());
+        comment.setParentId(commentCreateEntity.getParentId());
+        comment.setContent(commentCreateEntity.getContent());
+        comment.setType(commentCreateEntity.getType());
         comment.setGmtCreate(System.currentTimeMillis());
         comment.setGmtModified(System.currentTimeMillis());
         comment.setCommentator(user.getId());

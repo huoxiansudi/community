@@ -1,16 +1,24 @@
 package com.hxsd.service;
 
+import com.hxsd.entity.CommentEntity;
 import com.hxsd.enums.CommentTypeEnum;
 import com.hxsd.exception.CustomizeErrorCode;
 import com.hxsd.exception.CustomizeException;
 import com.hxsd.mapper.CommentMapper;
 import com.hxsd.mapper.QuestionExtMapper;
 import com.hxsd.mapper.QuestionMapper;
-import com.hxsd.model.Comment;
-import com.hxsd.model.Question;
+import com.hxsd.mapper.UserMapper;
+import com.hxsd.model.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by jinhs on 2019-08-15.
@@ -25,6 +33,8 @@ public class CommentService {
     private QuestionMapper questionMapper;
     @Autowired
     private QuestionExtMapper questionExtMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     @Transactional
     public void insert(Comment comment) {
@@ -37,22 +47,58 @@ public class CommentService {
             throw new CustomizeException(CustomizeErrorCode.TYPE_PARAM_WRONG);
         }
 
-        if(comment.getType() == CommentTypeEnum.COMMENT.getType()){
+        if (comment.getType() == CommentTypeEnum.COMMENT.getType()) {
             //回复评论
             Comment dbComment = commentMapper.selectByPrimaryKey(comment.getParentId());
-            if(dbComment==null){
+            if (dbComment == null) {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
             commentMapper.insert(comment);
-        }else{
+        } else {
             //回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
-            if(question==null){
+            if (question == null) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
             commentMapper.insert(comment);
             question.setCommentCount(1);
             questionExtMapper.updateCommentCount(question);
         }
+    }
+
+    public List<CommentEntity> listByQuestionId(Long id) {
+        CommentExample commentExample = new CommentExample();
+        commentExample.createCriteria()
+                .andParentIdEqualTo(id)
+                .andTypeEqualTo(CommentTypeEnum.QUESTION.getType());
+        //添加sql根据时间排序
+        commentExample.setOrderByClause("gmt_create desc");
+        List<Comment> comments = commentMapper.selectByExample(commentExample);
+        if (comments.size() == 0) {
+            return new ArrayList<>();
+        }
+        //获取去重的评论人
+        Set<Long> commentators = comments.stream().map(comment -> comment.getCommentator()).collect(Collectors.toSet());
+
+        List<Long> userIds = new ArrayList<>();
+        userIds.addAll(commentators);
+
+        //获取评论人并转换为map
+        UserExample userExample = new UserExample();
+        userExample.createCriteria()
+                .andIdIn(userIds);
+        List<User> users = userMapper.selectByExample(userExample);
+        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(user -> user.getId(), user -> user));
+
+        //转换 comment 为 commentEntity
+        List<CommentEntity> commentEntities = comments.stream().map(comment -> {
+            CommentEntity commentEntity = new CommentEntity();
+            BeanUtils.copyProperties(comment, commentEntity);
+            commentEntity.setUser(userMap.get(comment.getCommentator()));
+            return commentEntity;
+
+        }).collect(Collectors.toList());
+
+        return commentEntities;
     }
 }
