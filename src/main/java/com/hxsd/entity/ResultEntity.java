@@ -8,10 +8,11 @@ import lombok.Data;
  * Created by jinhs on 2019-08-15.
  */
 @Data
-public class ResultEntity {
+public class ResultEntity<T> {
 
     private Integer code;
     private String message;
+    private T data;
 
     public static ResultEntity errorOf(Integer code,String message){
         ResultEntity resultEntity = new  ResultEntity();
@@ -33,5 +34,13 @@ public class ResultEntity {
     public static ResultEntity errorOf(CustomizeException e) {
 
         return errorOf(e.getCode(),e.getMessage());
+    }
+
+    public static<T> ResultEntity okOf(T t) {
+        ResultEntity resultEntity = new  ResultEntity();
+        resultEntity.setCode(200);
+        resultEntity.setMessage("请求成功");
+        resultEntity.setData(t);
+        return resultEntity;
     }
 }

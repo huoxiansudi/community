@@ -1,7 +1,9 @@
 package com.hxsd.controller;
 
 import com.hxsd.entity.CommentCreateEntity;
+import com.hxsd.entity.CommentEntity;
 import com.hxsd.entity.ResultEntity;
+import com.hxsd.enums.CommentTypeEnum;
 import com.hxsd.exception.CustomizeErrorCode;
 import com.hxsd.mapper.CommentMapper;
 import com.hxsd.model.Comment;
@@ -10,12 +12,11 @@ import com.hxsd.service.CommentService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 /**
@@ -60,5 +61,14 @@ public class CommentController {
         objectObjectMap.put("message","成功");*/
 
         return ResultEntity.okOf();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/comment/{id}",method = RequestMethod.GET)
+    public ResultEntity<List<CommentEntity>> comments(@PathVariable("id")Long id, Model model){
+
+        List<CommentEntity> commentEntities = commentService.listByTargetId(id, CommentTypeEnum.COMMENT);
+
+        return ResultEntity.okOf(commentEntities);
     }
 }

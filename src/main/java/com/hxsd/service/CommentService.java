@@ -66,11 +66,11 @@ public class CommentService {
         }
     }
 
-    public List<CommentEntity> listByQuestionId(Long id) {
+    public List<CommentEntity> listByTargetId(Long id,CommentTypeEnum typeEnum) {
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria()
                 .andParentIdEqualTo(id)
-                .andTypeEqualTo(CommentTypeEnum.QUESTION.getType());
+                .andTypeEqualTo(typeEnum.getType());
         //添加sql根据时间排序
         commentExample.setOrderByClause("gmt_create desc");
         List<Comment> comments = commentMapper.selectByExample(commentExample);
