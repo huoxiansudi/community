@@ -4,10 +4,7 @@ import com.hxsd.entity.CommentEntity;
 import com.hxsd.enums.CommentTypeEnum;
 import com.hxsd.exception.CustomizeErrorCode;
 import com.hxsd.exception.CustomizeException;
-import com.hxsd.mapper.CommentMapper;
-import com.hxsd.mapper.QuestionExtMapper;
-import com.hxsd.mapper.QuestionMapper;
-import com.hxsd.mapper.UserMapper;
+import com.hxsd.mapper.*;
 import com.hxsd.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +31,8 @@ public class CommentService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
     @Autowired
+    private CommentExtMapper commentExtMapper;
+    @Autowired
     private UserMapper userMapper;
 
     @Transactional
@@ -54,6 +53,11 @@ public class CommentService {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
             commentMapper.insert(comment);
+            //增加评论数
+            Comment parentComment = new Comment();
+            parentComment.setId(comment.getParentId());
+            parentComment.setCommentCount(1);
+            commentExtMapper.updateCommentCount(parentComment);
         } else {
             //回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());

@@ -16,6 +16,7 @@ public class CommentEntity {
     private Long gmtCreate;
     private Long gmtModified;
     private Long likeCount;
+    private Integer commentCount;
     private String content;
     private User user;
 }
