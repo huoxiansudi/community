@@ -30,13 +30,17 @@ public class QuestionController {
 
         QuestionEntity questionEntity = questionService.getById(id);
 
+        List<QuestionEntity> questionEntityList = questionService.selectRelated(questionEntity);
+
         List<CommentEntity> commentEntities = commentService.listByTargetId(id, CommentTypeEnum.QUESTION);
+
 
         //累计阅读数
         questionService.incView(id);
 
         model.addAttribute("question",questionEntity);
         model.addAttribute("comments",commentEntities);
+        model.addAttribute("relatedQuestions",questionEntityList);
 
         return "question";
     }

@@ -10,13 +10,16 @@ import com.hxsd.mapper.UserMapper;
 import com.hxsd.model.Question;
 import com.hxsd.model.QuestionExample;
 import com.hxsd.model.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by jinhs on 2019-08-15.
@@ -51,7 +54,10 @@ public class QuestionService {
 
         //数据库分页查询
         Integer offset = size * (page - 1);
-        List<Question> questions = questionMapper.selectByExampleWithBLOBsWithRowbounds(new QuestionExample(), new RowBounds(offset, size));
+
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.setOrderByClause("gmt_create desc");
+        List<Question> questions = questionMapper.selectByExampleWithBLOBsWithRowbounds(questionExample, new RowBounds(offset, size));
         //数据库分页查询
 
         for (Question question : questions) {
@@ -168,5 +174,25 @@ public class QuestionService {
                 .andIdEqualTo(id);
         questionMapper.updateByExampleSelective(updateQuestion, questionExample);*/
 
+    }
+
+    public List<QuestionEntity> selectRelated(QuestionEntity queryEntity) {
+
+        if(StringUtils.isBlank(queryEntity.getTag())){
+            return new ArrayList<>();
+        }
+        String[] tags = StringUtils.split(queryEntity.getTag(), "，");
+        String regexpTag = Arrays.stream(tags).collect(Collectors.joining("|"));
+        Question question = new Question();
+        question.setId(queryEntity.getId());
+        question.setTag(regexpTag);
+        List<Question> questionList = questionExtMapper.selectRelated(question);
+        List<QuestionEntity> questionEntityList = questionList.stream().map(q -> {
+            QuestionEntity questionEntity = new QuestionEntity();
+            BeanUtils.copyProperties(q,questionEntity);
+            return questionEntity;
+        }).collect(Collectors.toList());
+
+        return questionEntityList;
     }
 }
