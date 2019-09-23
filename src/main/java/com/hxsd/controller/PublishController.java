@@ -1,5 +1,6 @@
 package com.hxsd.controller;
 
+import com.hxsd.cache.TagCache;
 import com.hxsd.entity.QuestionEntity;
 import com.hxsd.model.Question;
 import com.hxsd.model.User;
@@ -32,6 +33,7 @@ public class PublishController {
         model.addAttribute("description",question.getDescription());
         model.addAttribute("tag",question.getTag());
         model.addAttribute("id",question.getId());
+        model.addAttribute("tags", TagCache.get());
         return "publish";
     }
 

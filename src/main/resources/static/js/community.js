@@ -138,3 +138,22 @@ function collapseComments(e) {
 
     }
 }
+
+function selectTag(value) {
+    var preview = $("#tag").val();
+
+    if(preview.indexOf(value) == -1) { //查看是否存在该标签
+
+        if (preview) {
+            $("#tag").val(preview + '，' + value);
+        } else {
+            $("#tag").val(value);
+        }
+    }
+
+}
+
+function showSelectTag() {
+
+    $("#select-tag").show();
+}

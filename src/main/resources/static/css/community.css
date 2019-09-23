@@ -51,6 +51,11 @@ body {
     width: 200px;
 }
 
+.publish-tag-tab{
+    display: none;
+    margin-top: 10px;
+}
+
 .a-menu {
     display:block;
     color: #999;
