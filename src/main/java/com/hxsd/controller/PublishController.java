@@ -5,6 +5,7 @@ import com.hxsd.entity.QuestionEntity;
 import com.hxsd.model.Question;
 import com.hxsd.model.User;
 import com.hxsd.service.QuestionService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,7 +39,9 @@ public class PublishController {
     }
 
     @GetMapping("/publish")
-    public String publish() {
+    public String publish(Model model) {
+
+        model.addAttribute("tags", TagCache.get()); //添加标签页
         return "publish";
     }
 
@@ -53,6 +56,14 @@ public class PublishController {
         model.addAttribute("title",title);
         model.addAttribute("description",description);
         model.addAttribute("tag",tag);
+        model.addAttribute("tags", TagCache.get());
+
+        //判断用户是否登录
+        User user= (User) request.getSession().getAttribute("user");
+        if(user==null){
+            model.addAttribute("error","用户未登录");
+            return "publish";
+        }
 
         if(title == null || title == ""){
             model.addAttribute("error","标题不能为空");
@@ -67,13 +78,14 @@ public class PublishController {
             return "publish";
         }
 
-
-        //判断用户是否登录
-        User user= (User) request.getSession().getAttribute("user");
-        if(user==null){
-            model.addAttribute("error","用户未登录");
+        String invalid = TagCache.filterInvalid(tag);
+        if(StringUtils.isNotBlank(invalid)){
+            model.addAttribute("error","输入非法标签"+invalid);
             return "publish";
         }
+
+
+
 
         Question question = new Question();
         question.setTitle(title);

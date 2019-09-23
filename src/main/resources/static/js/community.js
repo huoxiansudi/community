@@ -139,7 +139,10 @@ function collapseComments(e) {
     }
 }
 
-function selectTag(value) {
+function selectTag(e) {
+
+    var value = e.getAttribute("data-tag");
+
     var preview = $("#tag").val();
 
     if(preview.indexOf(value) == -1) { //查看是否存在该标签

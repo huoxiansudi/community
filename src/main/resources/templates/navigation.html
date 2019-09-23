@@ -53,7 +53,11 @@
                     <ul class="nav navbar-nav navbar-right">
 
                         <li th:if="${session.user != null}">
-                            <a HREF="/publish">提问</a>
+                            <a href="/publish">提问</a>
+                        </li>
+
+                        <li>
+                            <a href="/profile/questions">通知<span class="badge">14</span></a>
                         </li>
 
                         <li class="dropdown" th:if="${session.user != null}">
