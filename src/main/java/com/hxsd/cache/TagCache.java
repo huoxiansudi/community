@@ -17,7 +17,7 @@ public class TagCache {
 
         TagEntity program = new TagEntity();
         program.setCategoryName("开发语言");
-        program.setTags(Arrays.asList("Java","js","css","c","html","python","ruby","active"));
+        program.setTags(Arrays.asList("Java","javascript","c#","python","Ruby","PHP","swift","basic","html5","node","asp.net","vue.js","angular 2","bootstrap","less/sass","ember.js"));
         tagEntityList.add(program);
 
         TagEntity framework = new TagEntity();
@@ -27,7 +27,7 @@ public class TagCache {
 
         TagEntity server = new TagEntity();
         server.setCategoryName("服务器");
-        server.setTags(Arrays.asList("Tomcat","js","css","c","html","python","ruby","active"));
+        server.setTags(Arrays.asList("Tomcat","Linux","Windows","MacX","html","python"));
         tagEntityList.add(server);
 
         return tagEntityList;

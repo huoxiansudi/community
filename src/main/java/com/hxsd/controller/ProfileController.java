@@ -2,6 +2,7 @@ package com.hxsd.controller;
 
 import com.hxsd.entity.PaginationEntity;
 import com.hxsd.model.User;
+import com.hxsd.service.NotificationService;
 import com.hxsd.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,8 @@ public class ProfileController {
 
     @Autowired
     private QuestionService questionService;
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping("/profile/{action}")
     public String profile(@PathVariable(name = "action") String action,
@@ -37,13 +40,16 @@ public class ProfileController {
 
             model.addAttribute("section","questions");
             model.addAttribute("sectionName","我的提问");
+            PaginationEntity paginationEntity = questionService.list(user.getId(), page, size);
+            model.addAttribute("pagination",paginationEntity);
         }else if("replies".equals(action)){
-            model.addAttribute("section","replies");
+            PaginationEntity paginationEntity = notificationService.list(user.getId(), page, size);
+            model.addAttribute("pagination",paginationEntity);
             model.addAttribute("sectionName","最新回复");
+            model.addAttribute("section","replies");
+
         }
 
-        PaginationEntity paginationEntity = questionService.list(user.getId(), page, size);
-        model.addAttribute("pagination",paginationEntity);
 
         return "profile";
     }

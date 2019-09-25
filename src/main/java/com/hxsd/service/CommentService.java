@@ -2,6 +2,8 @@ package com.hxsd.service;
 
 import com.hxsd.entity.CommentEntity;
 import com.hxsd.enums.CommentTypeEnum;
+import com.hxsd.enums.NotificationStatusEnum;
+import com.hxsd.enums.NotificationTypeEnum;
 import com.hxsd.exception.CustomizeErrorCode;
 import com.hxsd.exception.CustomizeException;
 import com.hxsd.mapper.*;
@@ -33,6 +35,8 @@ public class CommentService {
     @Autowired
     private CommentExtMapper commentExtMapper;
     @Autowired
+    private NotificationMapper notificationMapper;
+    @Autowired
     private UserMapper userMapper;
 
     @Transactional
@@ -53,11 +57,16 @@ public class CommentService {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
             commentMapper.insert(comment);
+
             //增加评论数
             Comment parentComment = new Comment();
             parentComment.setId(comment.getParentId());
             parentComment.setCommentCount(1);
             commentExtMapper.updateCommentCount(parentComment);
+
+            //创建通知
+            createNotify(comment, dbComment.getCommentator(),NotificationTypeEnum.REPLY_COMMENT);
+
         } else {
             //回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
@@ -67,7 +76,22 @@ public class CommentService {
             commentMapper.insert(comment);
             question.setCommentCount(1);
             questionExtMapper.updateCommentCount(question);
+            //创建通知
+            createNotify(comment, question.getCreator(),NotificationTypeEnum.REPLY_QUESTION);
         }
+    }
+
+    //创建通知方法
+    private void createNotify(Comment comment, Long receiver, NotificationTypeEnum notificationTypeEnum) {
+        Notification notification = new Notification();
+        notification.setGmtCreate(System.currentTimeMillis());
+
+        notification.setType(notificationTypeEnum.getType());
+        notification.setOuterid(comment.getParentId());
+        notification.setNotifier(comment.getCommentator());
+        notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+        notification.setReceiver(receiver);
+        notificationMapper.insert(notification);
     }
 
     public List<CommentEntity> listByTargetId(Long id,CommentTypeEnum typeEnum) {
