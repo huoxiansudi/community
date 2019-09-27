@@ -9,9 +9,9 @@ import java.util.List;
  * Created by jinhs on 2019-08-16.
  */
 @Data
-public class PaginationEntity {
+public class PaginationEntity<T> {
 
-    private List<QuestionEntity> questions;
+    private List<T> data;
     private boolean showPrevious;
     private boolean showFirstPage;
     private boolean showNext;

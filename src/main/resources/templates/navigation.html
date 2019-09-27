@@ -25,7 +25,7 @@
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav">
+                    <!--<ul class="nav navbar-nav">
                         <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
                         <li><a href="#">Link</a></li>
                         <li class="dropdown">
@@ -41,7 +41,7 @@
                                 <li><a href="#">One more separated link</a></li>
                             </ul>
                         </li>
-                    </ul>
+                    </ul>-->
                     <form class="navbar-form navbar-left">
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="搜索问题">
@@ -57,7 +57,7 @@
                         </li>
 
                         <li>
-                            <a href="/profile/replies">通知<span class="badge">14</span></a>
+                            <a href="/profile/replies">通知<span class="badge" th:text="${session.unreadCount}"></span></a>
                         </li>
 
                         <li class="dropdown" th:if="${session.user != null}">

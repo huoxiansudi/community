@@ -29,7 +29,7 @@ public class ProfileController {
                           Model model,
                           HttpServletRequest request,
                           @RequestParam(name = "page",defaultValue = "1")Integer page,
-                          @RequestParam(name = "size",defaultValue = "2")Integer size){
+                          @RequestParam(name = "size",defaultValue = "5")Integer size){
         //判断用户是否登录（每一次访问会先通过使用拦截器判断，是否登录）
         User user = (User) request.getSession().getAttribute("user");
         if(user==null){

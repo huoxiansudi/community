@@ -1,6 +1,5 @@
 package com.hxsd.entity;
 
-import com.hxsd.model.User;
 import lombok.Data;
 
 /**
@@ -9,9 +8,12 @@ import lombok.Data;
 @Data
 public class NotificationEntity {
     private Long id;
-    private Long gmt_create;
+    private Long gmtCreate;
     private Integer status;
-    private User notifier;
+    private Long notifier;
+    private String notifierName;
     private String outerTitle;
-    private String type;
+    private Long outerid;
+    private String typeName;
+    private Integer type;
 }

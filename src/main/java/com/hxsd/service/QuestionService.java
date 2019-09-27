@@ -37,8 +37,8 @@ public class QuestionService {
 
     public PaginationEntity list(Integer page, Integer size) {
 
-        List<QuestionEntity> questionEntityList = new ArrayList<>();
-        PaginationEntity paginationEntity = new PaginationEntity();
+
+        PaginationEntity<QuestionEntity> paginationEntity = new PaginationEntity<>();
 
         //获取总数和分页数
         Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
@@ -59,7 +59,7 @@ public class QuestionService {
         questionExample.setOrderByClause("gmt_create desc");
         List<Question> questions = questionMapper.selectByExampleWithBLOBsWithRowbounds(questionExample, new RowBounds(offset, size));
         //数据库分页查询
-
+        List<QuestionEntity> questionEntityList = new ArrayList<>();
         for (Question question : questions) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
 
@@ -71,7 +71,7 @@ public class QuestionService {
             questionEntityList.add(questionEntity);
         }
 
-        paginationEntity.setQuestions(questionEntityList);
+        paginationEntity.setData(questionEntityList);
 
 
         return paginationEntity;
@@ -79,8 +79,8 @@ public class QuestionService {
     }
 
     public PaginationEntity list(Long userId, Integer page, Integer size) {
-        List<QuestionEntity> questionEntityList = new ArrayList<>();
-        PaginationEntity paginationEntity = new PaginationEntity();
+
+        PaginationEntity<QuestionEntity> paginationEntity = new PaginationEntity<>();
 
         //获取总数和分页数
         QuestionExample questionExample = new QuestionExample();
@@ -105,6 +105,7 @@ public class QuestionService {
         List<Question> questions = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
         //数据库分页查询
 
+        List<QuestionEntity> questionEntityList = new ArrayList<>();
         for (Question question : questions) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
 
@@ -116,7 +117,7 @@ public class QuestionService {
             questionEntityList.add(questionEntity);
         }
 
-        paginationEntity.setQuestions(questionEntityList);
+        paginationEntity.setData(questionEntityList);
 
 
         return paginationEntity;

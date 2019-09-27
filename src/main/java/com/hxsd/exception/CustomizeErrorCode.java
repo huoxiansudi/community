@@ -12,7 +12,9 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     SYS_ERROR(2004,"服务出错了，请稍后再试~"),
     TYPE_PARAM_WRONG(2005,"评论类型错误"),
     COMMENT_NOT_FOUND(2006,"没有这个评论"),
-    COMMENT_IS_EMPTY(2007,"输入内容不能为空");
+    COMMENT_IS_EMPTY(2007,"输入内容不能为空"),
+    NOTIFICATION_NOT_FOUND(2008,"莫非这条信息不翼而飞了"),
+    READ_NOTIFICATION_FAIL(2009,"兄弟你这是读别人信息了");
 
     private Integer code;
     private String message;

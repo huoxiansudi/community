@@ -3,6 +3,7 @@ package com.hxsd.interceptor;
 import com.hxsd.mapper.UserMapper;
 import com.hxsd.model.User;
 import com.hxsd.model.UserExample;
+import com.hxsd.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private NotificationService notificationService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -38,6 +41,8 @@ public class SessionInterceptor implements HandlerInterceptor {
 
                     if (userList != null) {
                         request.getSession().setAttribute("user", userList.get(0));
+                        Long unreadCount = notificationService.unreadCount(userList.get(0).getId());
+                        request.getSession().setAttribute("unreadCount",unreadCount);
                     }
 
                     break;
