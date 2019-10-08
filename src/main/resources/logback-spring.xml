@@ -19,7 +19,7 @@
         -->
         <layout class="ch.qos.logback.classic.PatternLayout">
             <springProfile name="dev"> <!--开发环境日志输出-->
-                <pattern>%d{yyyy-MM-dd} --> [%thread] ---> %-5level%logger{50} - %msg%n
+                <pattern>%d{HH:mm:ss.SSS} --> [%thread] ---> %-5level%logger{50} - %msg%n
                 </pattern>
             </springProfile>
             <springProfile name="!dev"><!--非开发环境日志输出-->
