@@ -10,6 +10,7 @@ import com.hxsd.mapper.*;
 import com.hxsd.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -102,6 +103,9 @@ public class CommentService {
         notificationMapper.insert(notification);
     }
 
+    //指定缓存组件的名字，添加缓存的条件，当unless条件为true则不缓存
+    //,condition = "#id>1",unless = "#result == null "
+    @Cacheable(cacheNames = {"comment"})
     public List<CommentEntity> listByTargetId(Long id,CommentTypeEnum typeEnum) {
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria()
@@ -118,7 +122,7 @@ public class CommentService {
 
         List<Long> userIds = new ArrayList<>();
         userIds.addAll(commentators);
-
+        System.out.println("查询-----");
         //获取评论人并转换为map
         UserExample userExample = new UserExample();
         userExample.createCriteria()

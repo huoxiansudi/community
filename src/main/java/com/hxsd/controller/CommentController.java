@@ -5,7 +5,6 @@ import com.hxsd.entity.CommentEntity;
 import com.hxsd.entity.ResultEntity;
 import com.hxsd.enums.CommentTypeEnum;
 import com.hxsd.exception.CustomizeErrorCode;
-import com.hxsd.mapper.CommentMapper;
 import com.hxsd.model.Comment;
 import com.hxsd.model.User;
 import com.hxsd.service.CommentService;
@@ -24,8 +23,6 @@ import java.util.List;
  */
 @Controller
 public class CommentController {
-    @Autowired
-    private CommentMapper commentMapper;
 
     @Autowired
     private CommentService commentService;
